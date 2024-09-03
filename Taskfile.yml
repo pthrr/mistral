@@ -1,0 +1,26 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  config:
+    cmds:
+      - cmake -DMISTRAL_PLATFORM=RPI3 -DCMAKE_TOOLCHAIN_FILE=toolchains/aarch64.cmake -B build -S .
+
+  build:
+    cmds:
+      - task: config
+      - cmake --build build
+
+  run:
+    cmds:
+      - task: build
+      - qemu-system-aarch64 -M raspi3b -serial stdio -display none -kernel build/kernel8.img
+
+  debug:
+    cmds:
+      - qemu-system-aarch64 -M raspi3b -d in_asm -serial stdio -display none -kernel build/kernel8.img
+
+  clean:
+    cmds:
+      - rm -rf build
